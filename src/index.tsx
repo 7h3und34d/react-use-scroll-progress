@@ -7,7 +7,7 @@ export function useScrollProgress(ref: React.MutableRefObject<any>) {
     const elm = event.target as HTMLElement;
     const total = elm.scrollHeight - elm.offsetHeight;
     const current = elm.scrollTop;
-    setProgress((100 * current) / total);
+    setProgress(Math.floor((100 * current) / total));
   };
   React.useEffect(() => {
     const elm = ref.current;
