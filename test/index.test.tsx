@@ -1,15 +1,15 @@
 import * as React from 'react';
-import { useScrollProgress } from '../src';
+import { useScrollRef, getProgress } from '../src';
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 
 function MyComponent() {
   const ref = React.useRef(null);
-  const { progress } = useScrollProgress(ref);
+  const state = useScrollRef(ref);
 
   return (
     <>
-      <div role="article">{progress}</div>
+      <div role="article">{Math.floor(getProgress(state))}</div>
       <div
         role="feed"
         ref={ref}
@@ -25,7 +25,7 @@ function MyComponent() {
   );
 }
 
-describe('use scroll progress', () => {
+describe('use scroll ref', () => {
   it('on scroll progress is updated', () => {
     const [height, scrollTop] = [100, 23];
     render(<MyComponent />);
@@ -38,6 +38,7 @@ describe('use scroll progress', () => {
       .mockImplementation(() => scrollTop);
 
     expect(screen.getByRole('article')).toHaveTextContent('0');
+    fireEvent.scroll(screen.getByRole('feed'));
     fireEvent.scroll(screen.getByRole('feed'));
     expect(screen.getByRole('article')).toHaveTextContent(
       `${(100 * scrollTop) / height}`
